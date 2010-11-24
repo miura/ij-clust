@@ -39,6 +39,18 @@ Usage:
 e.g. 
 sh /g/almf/software/ij/lifcon.sh /g/haering/Pombescreen/test.lif
 
+=== lifcon2.sh (not working yet) ===
+bfconvert-only version but still not working. 
+
+*** qlifcon.sh ***
+same as lifcon.sh but only usable from qsub. argument is passed to qlifcon.sh
+by -v option of qsub (image file full path). 
+This script is called by lifcovert
+
+*** lifconvert ***
+bash script for running lif conversion in cluster. 
+takes a single argument (full path to image file)
+
 *** clust5fullp.sh ***
 
 for processing all files in a directory (passed as the argument). It creates jobfiles for each image file (using imageJ macro JCreate3.ijm), and the job is thrown to the cluster as a job array.
