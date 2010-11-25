@@ -38,8 +38,17 @@
 	}
 	workdir = File.getParent(srcfile);  //getDirectory("Choose a work space directory to save resulting files");
 	//create "tiffStack" folder under the gene folder (tiff stacks will have series No. and channel so no overlaps)
-	pathtifstack = workdir + q + name+ "_tifStack"; print(pathtifstack );
-	if (File.isDirectory(pathtifstack)==0) File.makeDirectory(pathtifstack);
+	//pathtifstack = workdir + q + name+ "_tifStack"; print(pathtifstack );
+	//if (File.isDirectory(pathtifstack)==0) File.makeDirectory(pathtifstack);
+	Ext.setGroupFiles("false");
+
+  Ext.getVersionNumber(version);
+  Ext.getRevision(revision);
+  Ext.getBuildDate(date);
+  print("Loci_Tools.jar Version: " + version);
+  print("revision: " + revision);
+  print("date: " + date);
+
 
 	Ext.setId(path);
 	Ext.getSeriesCount(seriesCount);
@@ -84,6 +93,7 @@
 function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr){
 	run("Bio-Formats Macro Extensions");
 
+  Ext.setGroupFiles("false");
 	//if (datasetOpened ==0) Ext.setId(id);
 	Ext.setId(id);
 	Ext.setSeries(seriesNum);
@@ -93,6 +103,10 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
 	Ext.getSizeT(sizeT);
   Ext.getDimensionOrder(dimOrder)
 	Ext.getImageCount(imageCount);
+  Ext.getPixelsPhysicalSizeX(psizeX);
+  Ext.getPixelsPhysicalSizeY(psizeY);
+  Ext.getPixelsPhysicalSizeZ(psizeZ);
+    
 	print("ImageCount:"+imageCount);
 	calculatedCount = sizeZ*sizeC*sizeT;
 	print("...calculated"+sizeZ*sizeC*sizeT);
@@ -103,7 +117,8 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
   print(dimOrder);
 	sizeT = imageCount/sizeC/sizeZ;
 	print("C:"+sizeC+" Z:"+sizeZ+" T:"+sizeT);
-	newname = name+"_"+seriesNum+"_ch"+ch+".tif";
+  print("Pysical Size: xy = "+ psizeX + " z = " + psizeZ); 
+  newname = name+"_"+seriesNum+"_ch"+ch+".tif";
 	setBatchMode(true);
 	for (j=0; j<sizeT; j++){		
 		for (i=0; i<sizeZ; i++){
@@ -123,6 +138,7 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
 			//print(currentPlane);
 		}
 	}
+   
 /*	rename(newname);
 	xscale = returnXscale(metastr);
 	yscale = returnYscale(metastr);

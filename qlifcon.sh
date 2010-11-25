@@ -1,9 +1,13 @@
 #!/bin/sh
-#script for converting Lif file to tif, and set physical scale. 
-# takes single argument, full path to the lif file. 
-# CLUSTER version. Called as a script from qsub. 
+# qlifcon.sh is a CLUSTER version of lifcon.sh.
+# script for converting Lif file to tif, and set physical scale. 
+# no argument is taken. 
+# 
+# This script shuold be called as a script from qsub. 
 # argument 'imgfullpath' is passed via -v option of 
-# qsub. 
+# qsub.
+#
+# Author: Kota Miura (cmci.embl.de) 
 
 # path to IJ jar file
 IJJARS="/g/almf/software/ij"
@@ -14,20 +18,14 @@ then
   exit 1
 fi
 
-
 # path to image 
 IMGFILE="${imgfullpath##*/}"
 IMGPATH="${imgfullpath%/*}"
 METAFULLPATH="${imgfullpath}.meta.txt"
 echo ${METAFULLPATH}
+
 # Lif converting IJ macro name
 IJMACRONAME="LifOpenerCUIijm"
-
-#arg2=$2
-#if test -f ${arg2}
-#then
-#IJMACRONAME=${arg2}
-#fi
 
 #timer
 jobstart=$(date +%s)

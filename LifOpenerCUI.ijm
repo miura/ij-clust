@@ -1,22 +1,37 @@
-// converts LIF file to channel-separated tif stacks. 
-// output files will be saved under the folder <LIF file name>_tifStack
+/* === LifOpenerCUI.ijm ===
+ImageJ Macro for Commandline Use.
+Converts LIF file to channel-separated tif stacks. 
+output files will be saved under a directory <LIF file name>_tifStack
 
-//bach command example
-/*
+IMPORTANT: plugin " ImpProp.class" is required in plugin folder.
+This class sets physical scales of output tiff stacks. Since macro command
+	run("Properties...")
+returns error in headless mode, this plugin does the similar without AWT, without error. 
+
+Author: Kota Miura (http://cmci.embl.de)
+
+History
+ Ver.1: metadata of .lif file based on 'showinf' tool is read for getting physical scales
+ Ver 2 (20101125-):  use new Bio-FormatPlugin functions for getting physical scale size
+ TODO: program might return error if sequence is terminated abruptly. 
+----------------------------------------------------------------
+1. full call from java
+
 /usr/struct/bin/java -cp /g/almf/software/ij/headless.jar:/g/almf/software/ij/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -ijpath /g/almf/software/ij -batch /g/almf/software/ij/LifOpenerCUI.ijm /g/almf/miura/lif/laminedapi23012.lif
+
+2. call using doIJ.sh
+set PATH=$PATH:/g/almf/software/bin2
+doIJ  /g/almf/software/ij/LifOpenerCUI.ijm /g/almf/miura/lif/laminedapi23012.lif
+
+3. call using Lifconvert
+set PATH=$PATH:/g/almf/software/bin2
+lifconvert /g/almf/miura/lif/laminedapi23012.lif
 */
-// DONE: scale should be set as the propertiy of tiff file. 
-// reading out of the scale from LIF is somehow not working, unlike it was done in 2009
-// metadata of .lif file would be saved as <filename.lif>.meta.txt
-// will be saved in the same directory. 
-// TODO: program might return error if sequence is terminated abruptly. 
 
-// IMPORTANT:for setting scale, plugin " ImpProp.class" is required in plugin folder.
 
-	srcfile = getArgument();		//cui
-//	srcfile = File.openDialog("Select a LIF File"); //gui	
+	srcfile = getArgument();		//cui mode
+//	srcfile = File.openDialog("Select a LIF File"); //gui mode	
 	requires("1.43d");
-	run("Bio-Formats Macro Extensions");
 
 	path = srcfile;
 	name = File.getName(path);
@@ -28,11 +43,23 @@
 	q = File.separator; //090912
 	metafullpath = dir+q+metaname;
 	metastr = File.openAsString(metafullpath);
-	workdir = File.getParent(srcfile);  //getDirectory("Choose a work space directory to save resulting files");
+	workdir = File.getParent(srcfile);  
+	//getDirectory("Choose a work space directory to save resulting files");
 
-	//create "tiffStack" folder under the gene folder (tiff stacks will have series No. and channel so no overlaps)
+	//create "<lif filename>_tiffStack" folder 
 	pathtifstack = workdir + q + name+ "_tifStack"; print(pathtifstack );
 	if (File.isDirectory(pathtifstack)==0) File.makeDirectory(pathtifstack);
+
+	run("Bio-Formats Macro Extensions");
+
+	Ext.setGroupFiles("false");
+
+	Ext.getVersionNumber(version);
+	Ext.getRevision(revision);
+	Ext.getBuildDate(date);
+	print("=== loci_tools.jar Version: " + version);
+	print("=== Revision: " + revision);
+	print("=== Revision Date: " + date);
 
 	Ext.setId(path);
 	Ext.getSeriesCount(seriesCount);
@@ -75,6 +102,7 @@
 */
 function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr){
 	run("Bio-Formats Macro Extensions");
+	Ext.setGroupFiles("false");
 
 	//if (datasetOpened ==0) Ext.setId(id);
 	Ext.setId(id);
@@ -84,6 +112,10 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
 	Ext.getSizeC(sizeC);
 	Ext.getSizeT(sizeT);
 	Ext.getImageCount(imageCount);
+	Ext.getPixelsPhysicalSizeX(psizeX);
+	Ext.getPixelsPhysicalSizeY(psizeY);
+	Ext.getPixelsPhysicalSizeZ(psizeZ);
+  
 	print("ImageCount:"+imageCount);
 	calculatedCount = sizeZ*sizeC*sizeT;
 	print("...calculated"+sizeZ*sizeC*sizeT);
@@ -93,6 +125,8 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
 	}
 	sizeT = imageCount/sizeC/sizeZ;
 	print("C:"+sizeC+" Z:"+sizeZ+" T:"+sizeT);
+	print("Pysical Size: xy = "+ psizeX + " z = " + psizeZ); 
+  
 	newname = name+"_"+seriesNum+"_ch"+ch+".tif";
 	setBatchMode(true);
 	for (j=0; j<sizeT; j++){		
@@ -113,14 +147,21 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
 		}
 	}
 	rename(newname);
-	xscale = returnXscale(metastr);
+/* following lines depricatd after 20101125 with fix of Loci_tools.jar
+
+  xscale = returnXscale(metastr);
 	yscale = returnYscale(metastr);
 	zscale = returnZscale(metastr);	
 	tscale = 1;//returnTscale(metastr);		
 	xscalemicron = parseFloat(xscale) * pow(10, 6);
 	yscalemicron = parseFloat(yscale) * pow(10, 6);
 	zscalemicron = parseFloat(zscale) * pow(10, 6);
-	op = "channels=1 slices="+sizeZ+" frames="+sizeT+" unit=micron pixel_width="+xscalemicron +" pixel_height="+yscalemicron +" voxel_depth="+zscalemicron +" frame=[0 sec] origin=0,0";
+*/
+	xscalemicron = parseFloat(psizeX);
+	yscalemicron = parseFloat(psizeY);
+	zscalemicron = parseFloat(psizeZ);
+
+  op = "channels=1 slices="+sizeZ+" frames="+sizeT+" unit=micron pixel_width="+xscalemicron +" pixel_height="+yscalemicron +" voxel_depth="+zscalemicron +" frame=[0 sec] origin=0,0";
 	//since run("Properties...", op); cannot be used (AWT problem in headless)
 	//follwoing is a new plugin for setting image properties. 
 	// ImpProp.class

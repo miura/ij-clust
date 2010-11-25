@@ -2,7 +2,7 @@
 #
 # *** Script for single image file procesing by ImageJ in cluster ***
 #	using doIJ.sh, this script processes images using cluster. 
-#		NOT FINISHED YET
+#		NOT FINISHED YET (use qdoIJ.sh instead)
 #		should check if it really works 
 #   two arguments for full paths to (2) an image file and (1) a macro file is required
 #   assuming that macro file takes the fisrt argument as the macro file to be processed 

@@ -1,6 +1,8 @@
 #!/bin/sh
-#script for converting Lif file to tif, and set physical scale. 
-# takes single argument, full path to the lif file. 
+#	script for converting Lif file to tif, and set physical scale. 
+#	takes single argument, full path to the lif file.
+#
+#	Author: Kota Miura (cmci.embl.de) 
 imgfullpath=$1
 
 # path to IJ jar file
