@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# lifconver: convert lif file to series of tiff stacks
-# uses cluster qsub 
-# Kota Miura         
+# lifconvert: convert lif file to series of tiff stacks
+# uses current terminal
+# Kota Miura (cmci.embl.de)        
 
 echo "=== Lif Converter ==="
 DIR=`dirname "$0"`
 echo $DIR
 echo "$@"
-#sh /g/almf/software/ij/lifcon.sh "$@"
-qsub -N LifConvert -l walltime=1:00:00 -q clng_new -v imgfullpath="$@" /g/almf/software/ij/qlifcon.sh  
+sh /g/almf/software/ij/lifcon.sh "$@"

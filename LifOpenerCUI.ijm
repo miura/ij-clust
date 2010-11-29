@@ -41,8 +41,8 @@ lifconvert /g/almf/miura/lif/laminedapi23012.lif
 	metaname = name + ".meta.txt";
 
 	q = File.separator; //090912
-	metafullpath = dir+q+metaname;
-	metastr = File.openAsString(metafullpath);
+	//metafullpath = dir+q+metaname;
+	//metastr = File.openAsString(metafullpath);
 	workdir = File.getParent(srcfile);  
 	//getDirectory("Choose a work space directory to save resulting files");
 
@@ -78,14 +78,14 @@ lifconvert /g/almf/miura/lif/laminedapi23012.lif
 
 		if (s>0) refresh =0;
 
-		seriesName = OpenLIFSeriesOneChannel(path, name, seriesNum, DAPIch, 0, metastr);	//modified 090925
+		seriesName = OpenLIFSeriesOneChannel(path, name, seriesNum, DAPIch, 0);	//modified 090925
 		G_GID = getImageID();
 		savepath = pathtifstack + q+getTitle();
 		print(savepath);
 		saveAs("tiff", savepath);
 		close();
 
-		OpenLIFSeriesOneChannel(path, name, seriesNum, FISHch, 0, metastr);
+		OpenLIFSeriesOneChannel(path, name, seriesNum, FISHch, 0);
 		G_RID = getImageID(); 
 		savepath = pathtifstack  + q+ getTitle();
 		print(savepath);
@@ -100,7 +100,7 @@ lifconvert /g/almf/miura/lif/laminedapi23012.lif
 	- save tif file in a specified directory
 	- problem with DAPI appearance in the resulting window.  ---> seperate 2D analysis files in other macro?
 */
-function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr){
+function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened){
 	run("Bio-Formats Macro Extensions");
 	Ext.setGroupFiles("false");
 
@@ -181,6 +181,7 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened, metastr
 	return seriesName;	
 }
 
+/* depricated from 20101125
 //zscale in micron
 function returnZscale(metastr){
 	metaA = split(metastr, "\n");
@@ -241,3 +242,4 @@ function returnTscale(){
 	}
 	}		 
 }
+*/
