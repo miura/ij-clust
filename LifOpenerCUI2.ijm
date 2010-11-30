@@ -13,7 +13,11 @@ Author: Kota Miura (http://cmci.embl.de)
 History
  Ver.1: metadata of .lif file based on 'showinf' tool is read for getting physical scales
  Ver 2 (20101125-):  use new Bio-FormatPlugin functions for getting physical scale size
- TODO: program might return error if sequence is terminated abruptly. 
+20101129:	
+	 	use Stack.setDimenstion and setVoxelsize instead of improp plugin. 
+    Scale setting might not needed (after updates of loci_tools.jar today) , but just leave it as it is,
+    until dimension order problem (appears as xyzct but actual order is xyctz)
+TODO: program might return error if sequence is terminated abruptly. 
 ----------------------------------------------------------------
 1. full call from java
 
@@ -84,13 +88,13 @@ lifconvert /g/almf/miura/lif/laminedapi23012.lif
 		print(savepath);
 		saveAs("tiff", savepath);
 		close();
-
 		OpenLIFSeriesOneChannel(path, name, seriesNum, FISHch, 0);
 		G_RID = getImageID(); 
 		savepath = pathtifstack  + q+ getTitle();
 		print(savepath);
 		saveAs("tiff", savepath);
 		close();
+    
 	}
 
 
@@ -133,12 +137,13 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened){
 		for (i=0; i<sizeZ; i++){
 			currentZch0 = i*sizeC;
 			currentPlane = j*sizeZ*sizeC + i*sizeC;
+			//Ext.getIndex(i, i + ch, j,currentPlane); 
 			Ext.openImage("t"+j+"_z"+i, currentPlane+ch);
 			if ((i==0) && (j==0))
 				stackID=getImageID();
 			else	{
 				run("Copy");
-				close;
+				close();
 				selectImage(stackID);
 				run("Add Slice");
 				run("Paste");
@@ -147,16 +152,7 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened){
 		}
 	}
 	rename(newname);
-/* following lines depricatd after 20101125 with fix of Loci_tools.jar
 
-  xscale = returnXscale(metastr);
-	yscale = returnYscale(metastr);
-	zscale = returnZscale(metastr);	
-	tscale = 1;//returnTscale(metastr);		
-	xscalemicron = parseFloat(xscale) * pow(10, 6);
-	yscalemicron = parseFloat(yscale) * pow(10, 6);
-	zscalemicron = parseFloat(zscale) * pow(10, 6);
-*/
 	xscalemicron = parseFloat(psizeX);
 	yscalemicron = parseFloat(psizeY);
 	zscalemicron = parseFloat(psizeZ);
@@ -171,75 +167,57 @@ function OpenLIFSeriesOneChannel(id, name, seriesNum, ch, datasetOpened){
 	Sxscalemicron = ""+xscalemicron;
 	Syscalemicron = ""+yscalemicron;
 	Szscalemicron = ""+zscalemicron;			
-	call("ImpProps.setCalibration", 
+/*	call("ImpProps.setCalibration", 
 		SsizeC, SsizeZ, SsizeT, "micron", 
 		Sxscalemicron, Syscalemicron, Szscalemicron);
-
+*/
+  Stack.setDimensions(SsizeC, SsizeZ, SsizeT); 
+	setVoxelSize(Sxscalemicron, Syscalemicron, Szscalemicron, "micron");
 	setBatchMode(false);
 	//if (datasetOpened ==0) Ext.close();
 	Ext.close();		
+  PrintWintitles();
 	return seriesName;	
 }
 
-/* depricated from 20101125
-//zscale in micron
-function returnZscale(metastr){
-	metaA = split(metastr, "\n");
-	zscale = 1;
-	for (i=0; i<metaA.length; i++){
-		if (startsWith(metaA[i], "HardwareSetting|ScannerSettingRecord|dblStepSize")){
-			lineA = split(metaA[i], " ");
-			//for (j=0; j<lineA.length; j++)print(lineA[j]);
-			if (lineA.length>=3) {
-				zscale = parseFloat(lineA[2]);
-				print(zscale);
-			}
-		}
-	}
-	return zscale;		 
+function PrintWintitles(){
+    imgnum=Wincount();
+    print("window number:" + imgnum);
+    if (imgnum > 1) {
+      imgIDA=newArray(imgnum);
+      wintitleA=newArray(imgnum);
+      CountOpenedWindows(imgIDA);
+      WinTitleGetter(imgIDA,wintitleA);
+      for (i = 0; i < wintitleA.length; i++) 
+        print(wintitleA[i]);
+    }
 }
 
-//Xscale in micron
-function returnXscale(metastr){
-	metaA = split(metastr, "\n");
-	xscale = 1;
-	for (i=0; i<metaA.length; i++){
-		if (startsWith(metaA[i], "HardwareSetting|ScannerSettingRecord|dblVoxelX")){
-			lineA = split(metaA[i], " ");
-			//for (j=0; j<lineA.length; j++)print(lineA[j]);
-			if (lineA.length>=3) { 
-				xscale = parseFloat(lineA[2]);
-				print(xscale);
-			}
-		}
-	}
-	return xscale;		 
+
+function CountOpenedWindows(imgIDA) {
+  imgcount=0;
+  for(i=0; i>-2000; i--) {
+    if(isOpen(i)) {
+      imgIDA[imgcount]=i;
+      imgcount++;
+    }
+  }
 }
 
-function returnYscale(metastr){
-	metaA = split(metastr, "\n");
-	yscale = 1;
-	for (i=0; i<metaA.length; i++){
-		if (startsWith(metaA[i], "HardwareSetting|ScannerSettingRecord|dblVoxelY")){
-			lineA = split(metaA[i], " ");
-			//for (j=0; j<lineA.length; j++)print(lineA[j]);
-			if (lineA.length>=3){
-				yscale = parseFloat(lineA[2]);
-				print(yscale);
-			}
-		}
-	}
-	return yscale;			 
+function Wincount() {
+  wincounter=0;
+  for(i=0; i>-2000; i--) {
+    if(isOpen(i)) {
+      wincounter++;
+      print(i);
+    }
+  }
+  return wincounter;
 }
 
-function returnTscale(){
-	metaA = split(metastr, "\n");
-	for (i=0; i<metaA.length; i++){
-	if (startsWith(metaA[i], "HardwareSetting|ScannerSettingRecord|dblStepSize")){
-		lineA = split(metaA[i], " ");
-		//for (j=0; j<lineA.length; j++)print(lineA[j]);
-		if (lineA.length>=3) print(parseFloat(lineA[2]));
-	}
-	}		 
+function WinTitleGetter(idA,titleA) {
+  for (i=0;i<idA.length;i++) {
+    selectImage(idA[i]);
+    titleA[i]=getTitle();
+  }
 }
-*/
