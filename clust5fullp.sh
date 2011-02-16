@@ -80,6 +80,7 @@ jobstart=$(date +%s)
 
 macroarg=${SRCPATH}:${OUTPATH}:${JOBPATH}:${JOBPREF}:${IJJARS}:${IJMACROPATH}:${IJMACRONAME}
 echo ${macroarg}
+echo ${IJMACRONAME}
 
 /usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -batch ${JOBGENPATH}/${JOBGENNAME} ${macroarg}
 
