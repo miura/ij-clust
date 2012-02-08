@@ -35,7 +35,7 @@ echo "Fiji full-path ${FIJI}"
 # Preparing Log file in your almf Home 
 logfilename="CLlog"`date +%Y%m%d`"_"`date +%H%M`".txt"
 #logfilename=${HOME}/${logfilename}
-logfilename="/g/almf/"`whoami`"/"${logfilename}
+logfilename="/home/"`whoami`"/"${logfilename}
 echo ${logfilename}
 echo `date` > ${logfilename}
 echo "========== ImageJ Processsing Log ========== "
