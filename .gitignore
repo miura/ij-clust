@@ -5,3 +5,5 @@ outdatedJars/*
 plugins/*
 plugins_jars/*
 t/*
+*~
+*.swp
