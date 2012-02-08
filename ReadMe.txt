@@ -1,6 +1,31 @@
 Shell Scripts and ImageJ macro for headless-processing. 
 Kota Miura (cmci.embl.de)
 
+*** doFJ.sh ***
+20120208
+
+The script takes two argments, script file path and image file / directory path.
+It might not work well with ImageJ macro (not tested), but with javascript most likely OK. In any case, avoid dialog window or image show() in the script.
+
+example:
+
+  processing a image file
+   ./doFJ /g/cmci/myscript.py /g/cmci/my/image.tif
+
+  processing image files in a directrory
+   ./doFJ /g/cmci/myscript.py /g/cmci/my   
+
+*** qsubFJ.sh ***
+20120208
+
+For submitting above command to the cluster via command qsub. If you need to use large memory, header lines should be adjusted. 
+
+  processing a image file
+   ./qsubFJ /g/cmci/myscript.py /g/cmci/my/image.tif
+
+  processing image files in a directrory
+   ./qsubFJ /g/cmci/myscript.py /g/cmci/my   
+
 *** BioformatOpenTest.ijm ***
 
 test accessing LIF file. 

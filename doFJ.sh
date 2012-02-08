@@ -23,7 +23,7 @@ if [ -e "${script}" ]
 then
 	echo ${script}" ...macro to be used"
 else
-	echo ${script}" ...no such macro file."
+	echo ${script}" ...no such script file."
 	exit 1
 fi
 # path to Fiji
@@ -32,14 +32,24 @@ FIJI="/g/almf/software/bin2/fiji"
 #echo "IJ full-path ${IJJARS}/headless.jar"
 echo "Fiji full-path ${FIJI}"
 
+# Preparing Log file in your almf Home 
+logfilename="CLlog"`date +%Y%m%d`"_"`date +%H%M`".txt"
+#logfilename=${HOME}/${logfilename}
+logfilename="/g/almf/"`whoami`"/"${logfilename}
+echo ${logfilename}
+echo `date` > ${logfilename}
+echo "========== ImageJ Processsing Log ========== "
+echo "Macro File... "${macrofile} >>  ${logfilename}
+echo "Image File... "${imgfile} >>  ${logfilename}
+
 #timer
 jobstart=$(date +%s)
 #jobstartN=$(date +%N)
 #/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -batch ${script} ${filepath}
 #/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -ijpath ${IJJARS} -batch ${script} ${filepath}
-${FIJI} ${script} ${filepath}
+${FIJI} ${script} ${filepath} >> ${logfilename}
 # timer
 jobend=$(date +%s)
 jobendN=$(date +%N)
 echo "Time: $((jobend-jobstart)) secs."
-echo "Time: $((jobendN-jobstartN)) nano-sec."
+#echo "Time: $((jobendN-jobstartN)) nano-sec."
