@@ -14,7 +14,7 @@ getDateAndTime(year, month, dayOfWeek, dayOfMonth, shour, sminute, ssecond, msec
 timestamp ="**** Start: "+ year + "-" + month + "-" + dayOfMonth + "-" + shour + ":" + sminute + ":" + ssecond + "." +msec;
 print(timestamp);
 if (!File.exists(srcfile)) {
-	print("Could not fine the file: " + srcfile);
+	print("Could not find the file: " + srcfile);
 	exit();
 }
 
