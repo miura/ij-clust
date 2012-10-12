@@ -12,7 +12,7 @@ imgfullpath = getArgument();
 print(imgfullpath);
 open(imgfullpath);
 run("Gaussian Blur...", "sigma=10");
-run("Invert");
+run("Invert", "stack");
 run("Subtract Background...", "rolling=50");
 savepath=imgfullpath+"mod.tif";
 saveAs("Tiff", savepath);
