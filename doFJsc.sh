@@ -47,7 +47,7 @@ jobstart=$(date +%s)
 #jobstartN=$(date +%N)
 #/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -batch ${script} ${filepath}
 #/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -ijpath ${IJJARS} -batch ${script} ${filepath}
-${FIJI} ${script} ${filepath} >> ${logfilename}
+${FIJI} --mem=4000M ${script} ${filepath} >> ${logfilename}
 # timer
 jobend=$(date +%s)
 jobendN=$(date +%N)
