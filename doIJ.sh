@@ -39,4 +39,4 @@ jobstartN=$(date +%N)
 jobend=$(date +%s)
 jobendN=$(date +%N)
 echo "Time: $((jobend-jobstart)) secs."
-echo "Time: $((jobendN-jobstartN)) nano-sec."
+#echo "Time: $((jobendN-jobstartN)) nano-sec."
