@@ -33,9 +33,10 @@ echo "IJ full-path ${IJJARS}"
 jobstart=$(date +%s)
 jobstartN=$(date +%N)
 #/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -batch ${macrofile} ${imgfile}
-/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -ijpath ${IJJARS} -batch ${macrofile} ${imgfile}
+#/usr/struct/bin/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.ja7c-Djava.awt.headless=true ij.ImageJ -ijpath ${IJJARS} -batch ${macrofile} ${imgfile}
+/g/almf/software/bin2/java -cp ${IJJARS}/headless.jar:${IJJARS}/ij-1.44h.jar -Djava.awt.headless=true ij.ImageJ -ijpath ${IJJARS} -batch ${macrofile} ${imgfile}
 # timer
 jobend=$(date +%s)
 jobendN=$(date +%N)
 echo "Time: $((jobend-jobstart)) secs."
-echo "Time: $((jobendN-jobstartN)) nano-sec."
+#echo "Time: $((jobendN-jobstartN)) nano-sec."

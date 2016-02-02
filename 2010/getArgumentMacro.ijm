@@ -17,4 +17,4 @@ run("Subtract Background...", "rolling=50");
 savepath=imgfullpath+"mod.tif";
 saveAs("Tiff", savepath);
 print("Output saved: "+savepath);
-close();
+//close();
