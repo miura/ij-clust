@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# qsubIJ: does ImageJ processing in cluster via qusub command
+# uses cluster qsub
+# two arguments are required: macrofile full path and image file full path 
+# Author: Kota Miura (miura@embl.de)        
+JOBNAME="ImageJ"
+WT="1:00:00"
+QUENAME="clng_new"
+
+echo "=== Imagej Processing in Cluster ==="
+DIR=`dirname "$0"`
+echo $DIR
+echo "$@" 
+args=("$@")
+echo "macro file ... ${args[0]}"
+echo "image file ... ${args[1]}"
+#mfile="${args[0]"
+#ifile="${args[1]"
+#if [ ! -e $mfile ]; then
+#	echo "macro file does not exists"
+#	exit
+#fi
+#if [ ! -e $ifile ]; then
+#	echo "image file does not exists"
+#	exit
+#fi
+
+qsub -N $JOBNAME -l walltime=$WT -q $QUENAME -v macrofile=${args[0]},imgfile=${args[1]} /g/almf/software/ij/qdoIJ.sh  

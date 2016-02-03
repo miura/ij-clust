@@ -1,0 +1,1 @@
+/g/almf/software/ImageJ/jre/bin/java -Xmx2048m -server -cp /g/almf/software/ImageJ/ij.jar ij.ImageJ -ijpath /g/almf/software/ij
